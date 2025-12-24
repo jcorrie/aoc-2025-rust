@@ -1,80 +1,73 @@
 use crate::reuse;
 
+const MAX_VALUE: u32 = 99;
+const MIN_VALUE: u32 = 0;
+
 #[derive(Debug)]
-struct Data {
-    first_list: Vec<i32>,
-    second_list: Vec<i32>,
-    gaps: Option<Vec<i32>>,
-    similarity_score: Option<Vec<i32>>,
+struct Dial {
+    dial: u32,
+    counter: i32,
 }
 
-impl Data {
-    fn sort_lists(&mut self) {
-        self.first_list.sort();
-        self.second_list.sort();
-    }
-
-    fn get_gaps(&mut self) {
-        let mut gaps: Vec<i32> = Vec::new();
-        for (first, second) in self.first_list.iter().zip(self.second_list.iter()) {
-            let gap = second - first;
-            let absolute_gap: i32 = i32::abs(gap);
-            gaps.push(absolute_gap)
-        }
-        self.gaps = Some(gaps);
-    }
-
-    fn sum_geps(&self) -> i32 {
-        match &self.gaps {
-            None => panic!("No gaps"),
-            Some(v) => return v.iter().sum(),
+impl Dial {
+    pub fn new() -> Dial {
+        Dial {
+            dial: 50,
+            counter: 0,
         }
     }
 
-    fn get_instances_in_second_list(&mut self) {
-        let mut similarity_score: Vec<i32> = Vec::new();
-        for i in self.first_list.iter() {
-            let hits_in_second_list: Vec<i32> = self
-                .second_list
-                .iter()
-                .copied()
-                .filter(|x| x == i)
-                .collect();
-            dbg!(hits_in_second_list.len());
-            let score = i * hits_in_second_list.len() as i32;
-            similarity_score.push(score);
+    fn increment_right(&mut self, increment_amount: u32) {
+        for _ in 0..increment_amount {
+            if self.dial == MAX_VALUE {
+                self.dial = MIN_VALUE
+            } else {
+                self.dial += 1
+            }
+            if self.dial == 0 {
+                self.counter += 1
+            }
         }
-        self.similarity_score = Some(similarity_score);
+    }
+
+    fn increment_left(&mut self, increment_amount: u32) {
+        // Convert to i32 to handle negative values properly
+        for _ in 0..increment_amount {
+            if self.dial == MIN_VALUE {
+                self.dial = MAX_VALUE
+            } else {
+                self.dial -= 1
+            }
+
+            if self.dial == 0 {
+                self.counter += 1
+            }
+        }
+    }
+    pub fn parse_instruction(&mut self, instruction: &str) {
+        let instruction = instruction.trim();
+        if instruction.is_empty() {
+            return;
+        }
+        let direction: &str = instruction.get(0..1).expect("Error parsing");
+        let increment_amount: u32 =
+            reuse::string_to_i32(instruction.get(1..).expect("Error parsing.")) as u32;
+        dbg!(direction);
+        dbg!(increment_amount);
+        match direction {
+            "L" => self.increment_left(increment_amount),
+            "R" => self.increment_right(increment_amount),
+            _ => panic!("Unexpected direction"),
+        }
     }
 }
 
 pub fn main(input: &str) -> i32 {
+    let mut dial = Dial::new();
     let input_list = reuse::split_input_by_line(input);
-    let mut data: Data = loop_through_input_list(input_list);
-    data.sort_lists();
-    dbg!(&data);
-    data.get_gaps();
-    dbg!(&data.gaps);
-    data.get_instances_in_second_list();
-    match data.similarity_score{
-        None => panic!("No similarity score"),
-        Some(v) => return v.iter().sum()
+    for item in input_list.iter() {
+        dial.parse_instruction(item);
+        dbg!(&dial);
     }
-    
-}
-
-fn loop_through_input_list(input: Vec<String>) -> Data {
-    let mut data: Data = Data {
-        first_list: Vec::new(),
-        second_list: Vec::new(),
-        gaps: None,
-        similarity_score: None,
-    };
-    for line in input {
-        let strings = reuse::split_string_to_list(&line, ' ');
-        dbg!(&strings);
-        data.first_list.push(reuse::string_to_i32(strings[0]));
-        data.second_list.push(reuse::string_to_i32(strings[3]));
-    }
-    return data;
+    dial.counter as i32
 }

@@ -1,10 +1,6 @@
-use std::fs;
-mod day1;
-mod reuse;
+use aoc_24_rust::real_main;
 
 fn main() {
-    let file: &str = "src/input-main.txt";
-    let contents = fs::read_to_string(file).expect("File not found");
-    let output = day1::main(&contents);
+    let output = real_main();
     println!("{:?}", output)
 }

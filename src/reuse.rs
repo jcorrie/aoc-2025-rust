@@ -2,12 +2,12 @@
 
 use regex::Regex;
 
-pub fn string_to_i32(input: &str) -> i32 {
-    let output = match input.parse::<i32>() {
+pub fn string_to_usize(input: &str) -> u128 {
+    let output = match input.parse::<u128>() {
         Ok(value) => Some(value),
         Err(_) => None,
     };
-    output.expect("Not an i32")
+    output.expect("Not a usize")
 }
 
 
@@ -52,9 +52,9 @@ pub fn regex_string(input: &str, pattern: &str) -> Vec<String> {
     re.find_iter(input)
         .map(|match_| match_.as_str().to_string())
         .collect()
-}
 
-pub fn chunks(string: &String, chunks: usize) -> Vec<&str> {
+}
+pub fn chunks(string: &str, chunks: usize) -> Vec<&str> {
     let mut subs = Vec::with_capacity(string.len() / chunks);
     let mut iter = string.chars();
     let mut pos = 0;

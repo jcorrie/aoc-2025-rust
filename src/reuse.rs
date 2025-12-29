@@ -29,6 +29,10 @@ pub fn split_string_to_list_of_ints(input: &str) -> Vec<usize> {
 
 pub fn split_string_to_list(input: &str, delimiter: char) -> Vec<&str> {
     input.split(delimiter).collect()
+    
+}
+pub fn split_string_to_list_w_index(input: &str, delimiter: char) -> Vec<(usize, &str)> {
+    input.split(delimiter).enumerate().collect()
 }
 
 pub fn split_input_by_line(input: &str) -> Vec<String> {

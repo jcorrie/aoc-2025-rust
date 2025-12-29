@@ -1,10 +1,10 @@
 use std::fs;
-mod day5;
+mod day6;
 mod reuse;
 
 pub fn real_main() -> u128 {
-    let file: &str = "src/input-main.txt";
+    let file: &str = "src/input-test.txt";
     let contents = fs::read_to_string(file).expect("File not found");
-    let output = day5::main(&contents);
+    let output = day6::main(&contents);
     output
 }

@@ -10,8 +10,6 @@ pub fn string_to_usize(input: &str) -> u128 {
     output.expect("Not a usize")
 }
 
-
-
 pub fn split_string_to_list_of_ints(input: &str) -> Vec<usize> {
     let mut output_vec: Vec<usize> = Vec::new();
     let char_vec: Vec<char> = string_to_char_vec(input, true);
@@ -29,7 +27,6 @@ pub fn split_string_to_list_of_ints(input: &str) -> Vec<usize> {
 
 pub fn split_string_to_list(input: &str, delimiter: char) -> Vec<&str> {
     input.split(delimiter).collect()
-    
 }
 pub fn split_string_to_list_w_index(input: &str, delimiter: char) -> Vec<(usize, &str)> {
     input.split(delimiter).enumerate().collect()
@@ -38,7 +35,6 @@ pub fn split_string_to_list_w_index(input: &str, delimiter: char) -> Vec<(usize,
 pub fn split_input_by_line(input: &str) -> Vec<String> {
     input.lines().map(|line| line.replace('\n', "")).collect()
 }
-
 
 pub fn regex_vec_groups(input: &str, pattern: &str) -> Vec<String> {
     let mut matches: Vec<String> = Vec::new();
@@ -56,7 +52,21 @@ pub fn regex_string(input: &str, pattern: &str) -> Vec<String> {
     re.find_iter(input)
         .map(|match_| match_.as_str().to_string())
         .collect()
+}
+pub fn chunks_owned(string: &str, chunks: usize) -> Vec<String> {
+    let mut subs: Vec<String> = Vec::with_capacity(string.len() / chunks);
+    let mut iter = string.chars();
+    let mut pos = 0;
 
+    while pos < string.len() {
+        let mut len = 0;
+        for ch in iter.by_ref().take(chunks) {
+            len += ch.len_utf8();
+        }
+        subs.push(string[pos..pos + len].to_string());
+        pos += len;
+    }
+    subs
 }
 pub fn chunks(string: &str, chunks: usize) -> Vec<&str> {
     let mut subs = Vec::with_capacity(string.len() / chunks);
@@ -76,7 +86,7 @@ pub fn chunks(string: &str, chunks: usize) -> Vec<&str> {
 
 pub fn string_to_char_vec(string: &str, remove_whitespace: bool) -> Vec<char> {
     if remove_whitespace {
-         string.chars().filter(|c| !c.is_whitespace()).collect()
+        string.chars().filter(|c| !c.is_whitespace()).collect()
     } else {
         string.chars().collect()
     }
